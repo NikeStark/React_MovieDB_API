@@ -1,0 +1,7 @@
+.container input::-moz-placeholder{
+    color: #fff;
+} 
+
+.container input{
+    color: #fff;
+} 
