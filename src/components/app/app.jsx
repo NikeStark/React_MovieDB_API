@@ -4,6 +4,7 @@ import SearchBox from '../search-box/search-box.jsx';
 import MovieList from '../movie-list/movie-list.jsx';
 import Spinner from '../spinner/spinner.jsx';
 import Pagination from '../pagination/pagination.jsx';
+import ErrorIndicator from '../error-indicator/error-indicator.jsx';
 
 import './app.css';
 
@@ -15,9 +16,29 @@ export default class App extends Component {
             searchTerm: '',
             loading: false,
             totalResults: 0,
-            currentPage: 1
+            currentPage: 1,
+            hasError: false
         }
         this.apiKey = process.env.REACT_APP_KEY_API
+    }
+
+    componentDidMount(){
+        this.nextPage,
+        this.onHandleSubmit
+    }
+
+    componentDidCatch(){
+        console.log('componentDidCatch()'),
+        this.setState({
+            hasError: true
+        })
+    }
+
+    onError = (err) => {
+        this.setState({
+            error: true,
+            loading: false
+        })
     }
 
     onHandleSubmit = (e) => {
@@ -32,12 +53,14 @@ export default class App extends Component {
             console.log(data)
         setTimeout(() => {
            this.setState({
+                 error: false,
                  loading: false,
                  movies: [...data.results],
                  totalResults: data.total_results
            });
         }, 1000)
         })
+        .catch(this.onError)
     })
 }
 
@@ -60,6 +83,7 @@ export default class App extends Component {
             console.log(data)
         setTimeout(() => {
            this.setState({
+                 error: false,
                  loading: false,
                  movies: [...data.results],
                  currentPage: pageNumber,
@@ -67,25 +91,27 @@ export default class App extends Component {
                 });
             }, 200)
             })
+        .catch(this.onError)
         })
     }
 
-    componentDidMount(){
-        this.nextPage
-    }
-
     render(){
-        const{movies, loading, totalResults, currentPage} = this.state
-
+        if(this.state.hasError){
+           return <ErrorIndicator />
+        }
+        const{movies, loading, totalResults, currentPage, error} = this.state
+        const hasData = !(loading||error)
+        const errorMessage = error ? <ErrorIndicator /> : null;
         const spinner = loading ? <Spinner /> : null;
-        const context = !loading ? <MovieList listOfMovies={movies}/> : null;
+        const context = hasData ? <MovieList listOfMovies={movies}/> : null;
+        const numberPages = Math.floor(totalResults / 20);
 
-        const numberPages = Math.floor(this.state.totalResults / 20);
         return(
             <div className="App">
                <Nav />
                <SearchBox handleSubmit={this.onHandleSubmit}
-                            handleChange={this.onHandleChange} />
+                          handleChange={this.onHandleChange} />
+                {errorMessage}            
                 {spinner}
                 {context}
                 {totalResults > 20 ? <Pagination 
