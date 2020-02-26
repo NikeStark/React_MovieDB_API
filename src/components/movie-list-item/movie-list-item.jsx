@@ -17,7 +17,7 @@ const MovieListItem = ({image}) => {
                     } 
                 </div>
                 <div className = "card-content">
-                    <p style={{color:"black"}}><a href="#">View Details</a></p>
+                    <p><a href="#" style={{color:"red"}}>View Details</a></p>
                 </div>
             </div>
         </div>

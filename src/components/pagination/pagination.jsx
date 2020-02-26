@@ -8,10 +8,11 @@ const Pagination = ({pages, currentPage, nextPage}) => {
     for(let i = 1; i <= pages + 1; i++){
         let active = currentPage == i ? 'active' : '';
 
-        pageLinks.push(<li className={`waves-effect ${active}`} key={i} 
+        pageLinks.push(<li className={`waves-effect waves-light ${active}`} key={i} 
         onClick={() => nextPage(i)}>
-            <a href="#"></a>
+            <a href="#">
             {i}
+            </a>
         </li>)
     }
 
@@ -19,7 +20,11 @@ const Pagination = ({pages, currentPage, nextPage}) => {
         <div className="container">
             <div className="row">
                 <ul className="pagination">
-                     {pageLinks}
+                    {currentPage > 1 ? <li className={`waves-effect`}
+                     onClick={() => nextPage(currentPage - 1)}><a href="#">Prev</a></li> : ''}
+                    {pageLinks}
+                    {currentPage < pages + 1 ? <li className={`waves-effect`}
+                    onClick={() => nextPage(currentPage + 1)}><a href="#">Next</a></li> : ''}
                 </ul>
             </div>
         </div>

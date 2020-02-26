@@ -36,7 +36,7 @@ export default class App extends Component {
                  movies: [...data.results],
                  totalResults: data.total_results
            });
-        }, 2000)
+        }, 1000)
         })
     })
 }
@@ -44,10 +44,16 @@ export default class App extends Component {
     onHandleChange = (e) => {
         this.setState({
             searchTerm: e.target.value,
+            totalResults: false,
+            currentPage: 1
         })
     }
 
     nextPage = (pageNumber) => {
+        this.setState({
+            loading: true,
+            totalResults: false
+        }, () => {
         fetch(`https://api.themoviedb.org/3/search/movie?api_key=3107d9cc4cc04afb1c702620d6547bea&query=${this.state.searchTerm}&page=${pageNumber}`)
         .then(res => res.json())
         .then(data => {
@@ -56,10 +62,16 @@ export default class App extends Component {
            this.setState({
                  loading: false,
                  movies: [...data.results],
-                 currentPage: pageNumber
-           })
+                 currentPage: pageNumber,
+                 totalResults: data.total_results
+                });
+            }, 200)
+            })
         })
-    })
+    }
+
+    componentDidMount(){
+        this.nextPage
     }
 
     render(){
